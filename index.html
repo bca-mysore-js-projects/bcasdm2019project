@@ -17,31 +17,7 @@
       </div>
     </nav>
 
-    <div class="container center-block login-form-container">
-      <form>
-        <div class="form-group">
-          <label ref="username">Username:</label>
-          <input id="username" type="text" maxlength="20" />
-        </div>
-        <div class="form-group">
-          <label ref="password">Password:</label>
-          <input id="password" type="password" maxlength="20" />
-        </div>
-        <button
-          type="button"
-          class="btn btn-primary"
-          onclick="window.ChatApp.login()"
-        >
-          Login
-        </button>
-        <button
-          type="button"
-          class="btn btn-default"
-          onclick="window.location='/signup.html'"
-        >
-          Sign Up
-        </button>
-      </form>
+    <div class="container center-block login-form-container" id="loginFormContainer">
     </div>
 
     <script src="js/jquery.min.js"></script>
@@ -61,6 +37,41 @@
     <script src="js/apiGateway-js-sdk/apigClient.js"></script>
     <script src="js/config.js"></script>
     <script src="js/site.js"></script>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+
+    <!-- Don't use this in production: -->
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <script type="text/babel">
+      ReactDOM.render(
+              <form>
+                <div className="form-group">
+                  <label>Username:</label>
+                  <input id="username" type="text" maxLength="20"/>
+                </div>
+                <div className="form-group">
+                  <label>Password:</label>
+                  <input id="password" type="password" maxLength="20"/>
+                </div>
+                <button
+                        type="button"
+                        className="btn btn-primary"
+                        onClick={function() {window.ChatApp.login()}}
+                >
+                  Login
+                </button>
+                <button
+                        type="button"
+                        className="btn btn-default"
+                        onClick={function() {window.location='/signup.html';}}
+
+                >
+                  Sign Up
+                </button>
+              </form>,
+              document.getElementById('loginFormContainer')
+      );
+    </script>
     <script type="text/javascript">
       $(function() {
         ChatApp.checkLogin(true, false);
