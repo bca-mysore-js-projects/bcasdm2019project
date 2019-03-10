@@ -178,7 +178,18 @@ var ChatApp = window.ChatApp || {};
                 window.location = '/chat.html#' + result.data;
             });
     };
-
+    ChatApp.initializeSignup = function () {
+        $("#profileContainer input").click(function(event){
+            if ($(event.target).val() === 'patient') {
+                $('#specialisationContainer').hide();
+                $('#diseaseContainer').show();
+            }
+            if ($(event.target).val() === 'doctor') {
+                $('#specialisationContainer').show();
+                $('#diseaseContainer').hide();
+            }
+        });
+    };
     ChatApp.signup = function () {
         var username = $('#username').val();
         var password = $('#password').val();
@@ -190,8 +201,36 @@ var ChatApp = window.ChatApp || {};
             Name: 'custom:profile',
             Value: getProfile()
         });
-        console.log('Profile info', getProfile());
-        userPool.signUp(username, password, [email, profile], null, function (err, result) {
+        var specialisation = new AmazonCognitoIdentity.CognitoUserAttribute({
+            Name: 'custom:specialisation',
+            Value: $('#specialisation').val()
+        });
+        var disease = new AmazonCognitoIdentity.CognitoUserAttribute({
+            Name: 'custom:disease',
+            Value: $('#custom').val()
+        });
+        var mobile = new AmazonCognitoIdentity.CognitoUserAttribute({
+            Name: 'custom:mobile',
+            Value: $('#mobile').val()
+        });
+
+        var data = [email, profile, mobile];
+
+        if (getProfile() === 'patient') {
+            data.push(disease);
+            data.push(new AmazonCognitoIdentity.CognitoUserAttribute({
+                Name: 'custom:patientid',
+                Value: JSON.stringify(Date.now()%1000000)
+            }));
+        } else {
+            data.push(specialisation);
+            data.push(new AmazonCognitoIdentity.CognitoUserAttribute({
+                Name: 'custom:doctorid',
+                Value: JSON.stringify(Date.now()%1000000)
+            }));
+        }
+
+        userPool.signUp(username, password, data, null, function (err, result) {
             if (err) {
                 alert(err);
             } else {

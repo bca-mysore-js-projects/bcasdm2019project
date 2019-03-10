@@ -27,10 +27,22 @@
           <label for="email">Email:</label>
           <input id="email" type="text" maxlength="120" />
         </div>
-        <div class="form-group">
+        <div class="form-group" id="profileContainer">
           <label>Profile:</label>
           <input type="radio" name="profile" value="doctor" checked> Doctor &nbsp &nbsp
           <input type="radio" name="profile" value="patient"> Patient
+        </div>
+        <div class="form-group" id="specialisationContainer">
+          <label for="specialisation">Specialisation:</label>
+          <input id="specialisation" type="text" maxlength="20" />
+        </div>
+        <div class="form-group" style="display: none" id="diseaseContainer">
+          <label for="disease">Disease:</label>
+          <input id="disease" type="text" maxlength="20" />
+        </div>
+        <div class="form-group">
+          <label for="mobile">Mobile:</label>
+          <input id="mobile" type="number" maxlength="13" />
         </div>
         <div class="form-group">
           <label for="password">Password:</label>
@@ -63,5 +75,8 @@
     <script src="js/apiGateway-js-sdk/apigClient.js"></script>
     <script src="js/config.js"></script>
     <script src="js/site.js"></script>
+    <script>
+      ChatApp.initializeSignup();
+    </script>
   </body>
 </html>
