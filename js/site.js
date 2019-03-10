@@ -10,6 +10,21 @@ var ChatApp = window.ChatApp || {};
 
     var apiClient = apigClientFactory.newClient();
 
+    function getProfile () {
+        var val;
+        // get list of radio buttons with specified name
+        var radios = document.getElementById('signupForm').elements['profile'];
+
+        // loop through list of radio buttons
+        for (var i=0, len=radios.length; i<len; i++) {
+            if ( radios[i].checked ) { // radio checked?
+                val = radios[i].value; // if so, hold its value in val
+                break; // and break out of for loop
+            }
+        }
+        return val; // return value of checked radio or undefined if none checked
+    }
+
     ChatApp.checkLogin = function (redirectOnRec, redirectOnUnrec) {
         var cognitoUser = userPool.getCurrentUser();
         if (cognitoUser !== null) {
@@ -138,14 +153,14 @@ var ChatApp = window.ChatApp || {};
         ChatApp.useToken(function (token) {
             apiClient.usersGet({}, null, {headers: {Authorization: token}})
                 .then(function (result) {
-                    result.data.forEach(function (name) {
+                    result.data.forEach(function (user) {
                         var button = $('<button class="btn btn-primary">Start Chat</button>');
                         button.on('click', function() {
-                            ChatApp.startChat(name);
+                            ChatApp.startChat(user.name);
                         });
-
+                        var profile = user.profile ? '<img width="30" height="30" src="./images/' + user.profile + '.png" alt="profle"/>' : '';
                         var row = $('<tr>');
-                        row.append('<td>' + name + '</td>');
+                        row.append('<td>' + user.name + ' ' + profile + '</td>');
                         var cell = $('<td>');
                         cell.append(button);
                         row.append(cell);
@@ -171,8 +186,12 @@ var ChatApp = window.ChatApp || {};
             Name: 'email',
             Value: $('#email').val()
         });
-
-        userPool.signUp(username, password, [email], null, function (err, result) {
+        var profile = new AmazonCognitoIdentity.CognitoUserAttribute({
+            Name: 'custom:profile',
+            Value: getProfile()
+        });
+        console.log('Profile info', getProfile());
+        userPool.signUp(username, password, [email, profile], null, function (err, result) {
             if (err) {
                 alert(err);
             } else {

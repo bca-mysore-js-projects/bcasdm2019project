@@ -1,0 +1,22 @@
+{
+  "name": "bcasdm2019project",
+  "version": "1.0.0",
+  "description": "bcasdm2019project",
+  "main": "index.js",
+  "scripts": {
+    "start": "./node_modules/.bin/http-server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bca-mysore-js-projects/bcasdm2019project.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bca-mysore-js-projects/bcasdm2019project/issues"
+  },
+  "homepage": "https://github.com/bca-mysore-js-projects/bcasdm2019project#readme",
+  "dependencies": {
+    "http-server": "^0.11.1"
+  }
+}
