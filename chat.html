@@ -89,6 +89,9 @@
           .keypress(function(event) {
             if (event.keyCode === 13) {
               window.ChatApp.send();
+              window.setTimeout(function () {
+                $("#message").val('');
+              }, 4000);
             }
           });
         $("#send").on("click", window.ChatApp.send);
