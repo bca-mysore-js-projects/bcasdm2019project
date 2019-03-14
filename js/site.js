@@ -150,13 +150,57 @@ var ChatApp = window.ChatApp || {};
     };
 
     ChatApp.populatePeople = function () {
+        var users = [];
         ChatApp.useToken(function (token) {
             apiClient.usersGet({}, null, {headers: {Authorization: token}})
                 .then(function (result) {
-                    result.data.forEach(function (user) {
+                    users = result;
+                    return apiClient.conversationsGet({}, null, {headers: {Authorization: token}});
+                })
+                .then(function (conversations) {
+                    var currentUsername = userPool.getCurrentUser().getUsername();
+
+                    users.data.forEach(function (user) {
                         var button = $('<button class="btn btn-primary">Start Chat</button>');
                         button.on('click', function() {
-                            ChatApp.startChat(user.name);
+                            var isExistingConversation = function () {
+                                var otherUser;
+                                conversations.data.forEach(function (convo) {
+                                    if(convo.participants.indexOf(user.name) > -1) {
+                                        otherUser = user;
+                                    }
+                                });
+                                return !!otherUser;
+                            };
+                            var getExistingConversationId = function () {
+                                var currentConvo = conversations.data.filter(function (convo) {
+                                    return (convo.participants.indexOf(user) > -1) && (convo.participants.indexOf(currentUsername) > -1);
+                                });
+
+                               return currentConvo[0].id;
+                            };
+
+
+                            conversations.data.forEach(function (convo) {
+                                var otherUsers = [];
+                                convo.participants.forEach(function (user) {
+                                    if (user !== currentUsername) {
+                                        otherUsers.push(user);
+                                    }
+                                });
+                            });
+
+
+                            if(isExistingConversation()) {
+                                // check if user already has conversation, start existing conversation
+                                console.log('ChatApp.startExistingChat(getExistingConversationId());');
+                                ChatApp.startExistingChat(getExistingConversationId());
+                            }
+                            else {
+                                // else startChat
+                                console.log('ChatApp.startChat(user.name);');
+                                ChatApp.startChat(user.name);
+                            }
                         });
                         var profile = user.profile ? '<img width="30" height="30" src="./images/' + user.profile + '.png" alt="profle"/>' : '';
                         var row = $('<tr>');
@@ -177,6 +221,9 @@ var ChatApp = window.ChatApp || {};
             .then(function (result) {
                 window.location = '/chat.html#' + result.data;
             });
+    };
+    ChatApp.startExistingChat = function (chatId) {
+        window.location = '/chat.html#' + chatId;
     };
     ChatApp.initializeSignup = function () {
         $("#profileContainer input").click(function(event){
